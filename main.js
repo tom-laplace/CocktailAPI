@@ -1,44 +1,64 @@
-const root = document.querySelector("#root");
-const apiUrl = "https://www.thecocktaildb.com/api/json/v1/1/random.php";
-const button = document.createElement("button");
+const API_URL = "https://www.thecocktaildb.com/api/json/v1/1/random.php";
 
-button.textContent = "Click me";
-root.appendChild(button);
+// création d'une div qui contiendra les détails du cocktail
+const details = document.createElement("div");
+document.body.appendChild(details);
 
-const fetchRandomDrink = async () => {
-  const data = await fetch(
-    "https://www.thecocktaildb.com/api/json/v1/1/random.php"
-  );
+// création d'un bouton
+const btn = document.createElement("button");
+btn.textContent = "Récupérer un cocktail";
+document.body.appendChild(btn);
 
-  return await data.json();
-};
+// positionnement du bouton en haut de la page
+btn.style.position = "sticky";
+btn.style.top = 0;
 
-button.addEventListener("click", async () => {
-  const data = await fetchRandomDrink();
-  // Récupérer le titre :
-  const title = data.drinks[0].strDrink;
+document.body.appendChild(btn);
 
-  // Récupérer la catégorie :
-  const category = data.drinks[0].strCategory;
+// fonction qui affiche les détails d'un cocktail
+async function showCocktail() {
+  try {
+    // récupération des données de l'API
+    const response = await fetch(API_URL);
+    const data = await response.json();
 
-  // Récupérer les ingrédients :
-  const ingredients = [];
-  for (let i = 1; i <= 15; i++) {
-    const ingredient = data.drinks[0][`strIngredient${i}`];
-    if (ingredient) {
-      ingredients.push(ingredient);
+    // récupération des détails du cocktail
+    const cocktail = data.drinks[0];
+    const title = cocktail.strDrink;
+    const category = cocktail.strCategory;
+    const instructions = cocktail.strInstructions;
+    const image = cocktail.strDrinkThumb;
+
+    // récupération des ingrédients du cocktail
+    const ingredients = [];
+    for (let i = 1; i <= 15; i++) {
+      const ingredient = cocktail[`strIngredient${i}`];
+      const measure = cocktail[`strMeasure${i}`];
+      if (ingredient) {
+        ingredients.push(`${ingredient} - ${measure}`);
+      }
     }
+
+    // affichage des détails du cocktail
+    // affichage des détails du cocktail
+    details.innerHTML = `
+<div style="margin: auto; width: 500px;">
+  <h1>${title}</h1>
+  <p><strong>Catégorie :</strong> ${category}</p>
+  <p><strong>Instructions :</strong> ${instructions}</p>
+  <h2>Ingrédients :</h2>
+  <ul>
+    ${ingredients.map((ingredient) => `<li>${ingredient}</li>`).join("")}
+  </ul>
+  <img src="${image}" alt="${title}" style="width: 200px;" />
+</div>
+`;
+  } catch (error) {
+    // affichage d'une erreur en cas d'échec de la requête
+    details.textContent =
+      "Une erreur est survenue lors de la récupération des données";
   }
+}
 
-  // Récupérer les instructions :
-  const instructions = data.drinks[0].strInstructions;
-
-  // Récupérer l'image :
-  const image = data.drinks[0].strDrinkThumb;
-
-  const h1 = document.createElement("h1");
-
-  h1.textContent = title;
-
-  root.appendChild(h1);
-});
+// ajout d'un écouteur d'évènement sur le bouton pour afficher un cocktail au clic
+btn.addEventListener("click", showCocktail);
