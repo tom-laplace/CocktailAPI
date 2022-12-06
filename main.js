@@ -1,24 +1,23 @@
 const API_URL = "https://www.thecocktaildb.com/api/json/v1/1/random.php";
 
 const btnDiv = document.createElement("div");
-btnDiv.style.margin = "auto";
-btnDiv.style.width = "500px";
-btnDiv.style.textAlign = "center";
+btnDiv.classList.add("btnDiv");
 document.body.appendChild(btnDiv);
 
 const btn = document.createElement("button");
-btn.textContent = "Récupérer un cocktail";
+btn.textContent = "CockTell me";
 btn.classList.add("btn");
 btnDiv.appendChild(btn);
 
 const details = document.createElement("div");
 document.body.appendChild(details);
 
+async function getCocktailData(url) {
+    const response = await fetch(url);
+    return await response.json();
+}
 
-async function getCocktail() {
-  const response = await fetch(API_URL);
-  const data = await response.json();
-
+function parseCocktailData(data) {
   const cocktail = data.drinks[0];
   const title = cocktail.strDrink;
   const category = cocktail.strCategory;
@@ -33,6 +32,7 @@ async function getCocktail() {
       ingredients.push(`${ingredient} - ${measure}`);
     }
   }
+
   return {
     title,
     category,
@@ -40,6 +40,12 @@ async function getCocktail() {
     ingredients,
     image,
   };
+}
+
+async function getCocktail(url) {
+  const data = await getCocktailData(url);
+  const cocktail = parseCocktailData(data);
+  return cocktail;
 }
 
 function displayCocktail(cocktail) {
@@ -60,8 +66,6 @@ function displayCocktail(cocktail) {
 
   details.innerHTML = html;
 }
-
-
 
 async function showCocktail() {
   const cocktail = await getCocktail(API_URL);
