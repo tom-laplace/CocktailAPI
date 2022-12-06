@@ -54,7 +54,7 @@ function displayCocktail(cocktail) {
       .map((ingredient) => `<li>${ingredient}</li>`)
       .join("")}
   </ul>
-  <img src="${cocktail.image}" alt="${cocktail.title}" style="width: 200px;" />
+  <img src="${cocktail.image}" alt="${cocktail.title}" id="cocktailImg" />
 </div>
 `;
 

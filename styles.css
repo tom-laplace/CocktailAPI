@@ -36,3 +36,8 @@ body {
 .btn:active {
   top: 2px;
 }
+
+#cocktailImg{
+    width: 250px;
+    border: whitesmoke 5px solid;
+}
